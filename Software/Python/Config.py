@@ -17,7 +17,7 @@ SYSTEM_CONFIG = [
 ]
 
 # --- TUNING SETTINGS ---
-YOLO_MODEL_PATH = r"C:\Users\Alienware R7\Documents\PlatformIO\Projects\camESP32\runs\detect\train6\weights\best.pt"
+YOLO_MODEL_PATH = r"C:\path\to\your\best.pt"
 YOLO_SIZE = 320
 CONFIDENCE = 0.4
 LOOKAHEAD_TIME = 0.4
