@@ -16,29 +16,21 @@ public class CameraVectorVisualizer : MonoBehaviour
     private LineRenderer _rayLine;
     private GameObject _marker;
 
-    // We store an override point. If set, the line stops here.
-    private Vector3? _overrideTarget = null;
+    private Vector3? _overrideTarget = null; // We store an override point. If set, the line stops here.
 
     void Start()
     {
-        if (lineMaterial == null)
-            lineMaterial = new Material(Shader.Find("Sprites/Default"));
-
-        // Line showing forward direction
-        _rayLine = gameObject.AddComponent<LineRenderer>();
+        if (lineMaterial == null) lineMaterial = new Material(Shader.Find("Sprites/Default"));
+        _rayLine = gameObject.AddComponent<LineRenderer>(); // Line showing forward direction
         _rayLine.positionCount = 2;
         _rayLine.startWidth = lineWidth;
         _rayLine.endWidth = lineWidth;
         _rayLine.material = lineMaterial;
         _rayLine.useWorldSpace = true;
-
-        // --- 50% Faded White ---
-        Color fadedWhite = new Color(1f, 1f, 1f, 0.5f);
+        Color fadedWhite = new Color(1f, 1f, 1f, 0.5f); // --- 50% Faded White ---
         _rayLine.startColor = fadedWhite;
         _rayLine.endColor = fadedWhite;
-
-        // Small sphere at ground intersection
-        _marker = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        _marker = GameObject.CreatePrimitive(PrimitiveType.Sphere); // Small sphere at ground intersection
         _marker.name = "RayHitMarker";
         Destroy(_marker.GetComponent<Collider>());
         _marker.transform.localScale = Vector3.one * markerScale;
@@ -59,23 +51,14 @@ public class CameraVectorVisualizer : MonoBehaviour
     {
         Vector3 origin = transform.position;
         Vector3 dir = transform.forward; 
-
         _rayLine.SetPosition(0, origin);
-
-        // PRIORITY 1: Triangulation Override
-        if (_overrideTarget.HasValue)
+        if (_overrideTarget.HasValue) // PRIORITY 1: Triangulation Override
         {
-            // Draw exactly to the projected point on the line
-            _rayLine.SetPosition(1, _overrideTarget.Value);
-            
-            // Hide the ground marker (we are tracking a target in air)
-            _marker.SetActive(false);
+            _rayLine.SetPosition(1, _overrideTarget.Value); // Draw exactly to the projected point on the line
+            _marker.SetActive(false); // Hide the ground marker (we are tracking a target in air)
             return;
         }
-
-        // PRIORITY 2: Standard Ground/Infinite Ray
-        _marker.SetActive(true);
-
+        _marker.SetActive(true); // PRIORITY 2: Standard Ground/Infinite Ray
         if (Mathf.Abs(dir.y) < 1e-5f)
         {
             Vector3 farPoint = origin + dir * rayLength;
@@ -83,15 +66,11 @@ public class CameraVectorVisualizer : MonoBehaviour
             _marker.transform.position = farPoint;
             return;
         }
-
         float t = (groundY - origin.y) / dir.y;
-
         if (t > 0f)
         {
             Vector3 hit = origin + dir * t;
-            
             if (t > rayLength) hit = origin + dir * rayLength;
-
             _rayLine.SetPosition(1, hit);
             _marker.transform.position = hit;
         }

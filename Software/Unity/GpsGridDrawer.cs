@@ -16,12 +16,7 @@ public class GpsGridDrawer : MonoBehaviour
 
     void Start()
     {
-        if (lineMaterial == null)
-        {
-            // Unity default material fallback
-            lineMaterial = new Material(Shader.Find("Sprites/Default"));
-        }
-
+        if (lineMaterial == null) lineMaterial = new Material(Shader.Find("Sprites/Default"));
         BuildGrid();
     }
 
@@ -33,23 +28,18 @@ public class GpsGridDrawer : MonoBehaviour
 
     void BuildGrid()
     {
-        // Vertical lines (north-south): x constant, z varies
         for (int x = -halfSizeMeters; x <= halfSizeMeters; x += spacingMeters)
         {
             Vector3 a = new Vector3(x, y, -halfSizeMeters);
             Vector3 b = new Vector3(x, y,  halfSizeMeters);
             CreateLine($"Grid_X_{x}", a, b);
         }
-
-        // Horizontal lines (east-west): z constant, x varies
         for (int z = -halfSizeMeters; z <= halfSizeMeters; z += spacingMeters)
         {
             Vector3 a = new Vector3(-halfSizeMeters, y, z);
             Vector3 b = new Vector3( halfSizeMeters, y, z);
             CreateLine($"Grid_Z_{z}", a, b);
         }
-
-        // Optional: axis lines thicker (X and Z)
         CreateLine("Axis_X", new Vector3(-halfSizeMeters, y, 0), new Vector3(halfSizeMeters, y, 0), lineWidth * 2f);
         CreateLine("Axis_Z", new Vector3(0, y, -halfSizeMeters), new Vector3(0, y, halfSizeMeters), lineWidth * 2f);
     }
@@ -58,7 +48,6 @@ public class GpsGridDrawer : MonoBehaviour
     {
         var go = new GameObject(name);
         go.transform.SetParent(transform, false);
-
         var lr = go.AddComponent<LineRenderer>();
         lr.positionCount = 2;
         lr.SetPosition(0, start);
@@ -69,7 +58,6 @@ public class GpsGridDrawer : MonoBehaviour
         lr.useWorldSpace = true;
         lr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         lr.receiveShadows = false;
-
         _lines.Add(go);
     }
 }

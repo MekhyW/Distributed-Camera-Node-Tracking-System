@@ -19,13 +19,10 @@ public class NodeData : MonoBehaviour
     public double lon;
 
     [Header("Orientation")]
-    // Raw values from ESP32
-    public float rawPitch;
-    public float rawYaw;
-
-    // Values actually applied to Unity transform (after sign flips)
-    public float appliedPitch;
-    public float appliedYaw;
+    public float rawPitch; // raw from ESP32
+    public float rawYaw; // raw from ESP32
+    public float appliedPitch; // applied to Unity transform (after sign flips)
+    public float appliedYaw; // applied to Unity transform (after sign flips)
 
     public float Heading360 => Normalize360(transform.eulerAngles.y);
 

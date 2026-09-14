@@ -41,7 +41,6 @@ public class NodeManager_Ascii : MonoBehaviour
             enabled = false;
             return;
         }
-
         try
         {
             ep = new IPEndPoint(IPAddress.Any, port);
@@ -49,10 +48,7 @@ public class NodeManager_Ascii : MonoBehaviour
             udp.BeginReceive(OnReceive, null);
             Debug.Log($"<color=green>UDP Listener started on port {port}. Waiting for ESP32...</color>");
         }
-        catch (Exception e)
-        {
-            Debug.LogError("Failed to start UDP: " + e.Message);
-        }
+        catch (Exception e) { Debug.LogError("Failed to start UDP: " + e.Message); }
     }
 
     void OnDestroy()
@@ -66,11 +62,7 @@ public class NodeManager_Ascii : MonoBehaviour
         {
             byte[] data = udp.EndReceive(ar, ref ep);
             string msg = Encoding.ASCII.GetString(data);
-
-            lock (_queueLock)
-            {
-                _queue.Add(msg);
-            }
+            lock (_queueLock) { _queue.Add(msg); }
         }
         catch { }
         finally
@@ -82,7 +74,6 @@ public class NodeManager_Ascii : MonoBehaviour
     void Update()
     {
         List<string> copy = null;
-
         lock (_queueLock)
         {
             if (_queue.Count > 0)
@@ -91,9 +82,7 @@ public class NodeManager_Ascii : MonoBehaviour
                 _queue.Clear();
             }
         }
-
         if (copy == null) return;
-
         foreach (var raw in copy)
         {
             if (!TryParseYourFormat(raw, out int id, out NodeMode mode, out float pitch, out float yaw, out double lat, out double lon))
@@ -101,15 +90,11 @@ public class NodeManager_Ascii : MonoBehaviour
                 Debug.LogWarning($"Parse Failed! String: '{raw}'");
                 continue;
             }
-
             EnsureNodeExists(id);
-
             float appliedPitch = invertPitch ? -pitch : pitch;
             float appliedYaw = invertYaw ? -yaw : yaw;
-
             Vector3 pos = GpsToUnity(lat, lon);
             Quaternion rot = Quaternion.Euler(appliedPitch, appliedYaw, 0f);
-
             if (nodeDatas.TryGetValue(id, out var nd))
             {
                 nd.id = id;
@@ -121,9 +106,6 @@ public class NodeManager_Ascii : MonoBehaviour
                 nd.appliedPitch = appliedPitch;
                 nd.appliedYaw = appliedYaw;
             }
-
-            // Optional: If mode is Disabled, you might choose NOT to move the node visually:
-            // if (mode != NodeMode.Disabled) 
             nodes[id].Apply(pos, rot);
         }
     }
@@ -131,15 +113,12 @@ public class NodeManager_Ascii : MonoBehaviour
     private void EnsureNodeExists(int id)
     {
         if (nodes.ContainsKey(id) && nodes[id] != null) return;
-
         GameObject obj = Instantiate(nodePrefab);
         obj.name = "Node_" + id;
         Debug.Log($"<color=cyan>Spawned new node: {obj.name}</color>");
-
         var controller = obj.GetComponent<NodeController>();
         if (controller == null) controller = obj.AddComponent<NodeController>();
         nodes[id] = controller;
-
         var data = obj.GetComponent<NodeData>();
         if (data == null) data = obj.AddComponent<NodeData>();
         data.id = id;
@@ -154,42 +133,26 @@ public class NodeManager_Ascii : MonoBehaviour
         yaw = 0; 
         lat = 0; 
         lon = 0;
-
         string[] tokens = s.Trim().Split(',');
         if (tokens.Length < 6) return false;
-
         bool okId = false, okMode = false, okP = false, okY = false, okLat = false, okLon = false;
-
         foreach (var t in tokens)
         {
             string token = t.Trim();
-
-            if (token.StartsWith("ID:"))
-                okId = int.TryParse(token.Substring(3), out id);
-
+            if (token.StartsWith("ID:")) okId = int.TryParse(token.Substring(3), out id);
             else if (token.StartsWith("M:"))
             {
                 string modeStr = token.Substring(2).Trim().ToUpper();
                 if (modeStr.StartsWith("T")) mode = NodeMode.Tracking;
                 else if (modeStr.StartsWith("D")) mode = NodeMode.Disabled;
                 else mode = NodeMode.Searching;
-                
                 okMode = true;
             }
-
-            else if (token.StartsWith("P:"))
-                okP = float.TryParse(token.Substring(2), NumberStyles.Float, CultureInfo.InvariantCulture, out pitch);
-
-            else if (token.StartsWith("MAG:")) 
-                okY = float.TryParse(token.Substring(4), NumberStyles.Float, CultureInfo.InvariantCulture, out yaw);
-
-            else if (token.StartsWith("LAT:"))
-                okLat = double.TryParse(token.Substring(4), NumberStyles.Float, CultureInfo.InvariantCulture, out lat);
-
-            else if (token.StartsWith("LON:"))
-                okLon = double.TryParse(token.Substring(4), NumberStyles.Float, CultureInfo.InvariantCulture, out lon);
+            else if (token.StartsWith("P:")) okP = float.TryParse(token.Substring(2), NumberStyles.Float, CultureInfo.InvariantCulture, out pitch);
+            else if (token.StartsWith("MAG:")) okY = float.TryParse(token.Substring(4), NumberStyles.Float, CultureInfo.InvariantCulture, out yaw);
+            else if (token.StartsWith("LAT:")) okLat = double.TryParse(token.Substring(4), NumberStyles.Float, CultureInfo.InvariantCulture, out lat);
+            else if (token.StartsWith("LON:")) okLon = double.TryParse(token.Substring(4), NumberStyles.Float, CultureInfo.InvariantCulture, out lon);
         }
-
         return okId && okMode && okP && okY && okLat && okLon;
     }
 
@@ -198,10 +161,8 @@ public class NodeManager_Ascii : MonoBehaviour
         double lat0Rad = originLat * Math.PI / 180.0;
         double dLat = (lat - originLat) * Math.PI / 180.0;
         double dLon = (lon - originLon) * Math.PI / 180.0;
-
         double north = dLat * EarthRadius;
         double east = dLon * EarthRadius * Math.Cos(lat0Rad);
-
         return new Vector3((float)east, 0f, (float)north);
     }
 }
