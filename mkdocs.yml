@@ -1,0 +1,72 @@
+site_name: Distributed Camera Node Tracking System
+site_description: Build, configure and run a multi-node camera system that tracks and triangulates a moving target.
+site_url: https://mekhyw.github.io/Distributed-Camera-Node-Tracking-System/
+repo_url: https://github.com/MekhyW/Distributed-Camera-Node-Tracking-System
+repo_name: Distributed-Camera-Node-Tracking-System
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  icon:
+    logo: material/cctv
+    repo: fontawesome/brands/github
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - search.highlight
+    - content.code.copy
+    - content.action.edit
+
+nav:
+  - Home: index.md
+  - Getting started:
+      - Hardware: getting-started/hardware.md
+      - Firmware: getting-started/firmware.md
+      - Python tracker: getting-started/python-tracker.md
+      - Unity visualizer: getting-started/unity-visualizer.md
+  - How it works: how-it-works.md
+  - Reference:
+      - Configuration: reference/configuration.md
+      - Network protocol: reference/network-protocol.md
+  - Troubleshooting: troubleshooting.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js
