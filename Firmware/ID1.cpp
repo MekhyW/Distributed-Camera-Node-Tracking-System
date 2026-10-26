@@ -11,8 +11,8 @@
 #include "soc/rtc_cntl_reg.h"
 
 // --- WIFI CONFIG ---
-const char* ssid = "timahuz";
-const char* password = "colfax2021";
+const char* ssid = "<YOUR WIFI NAME>";
+const char* password = "<YOUR WIFI PASSWORD>";
 
 // --- SENSOR HARDWARE CONFIG ---
 #define GPS_RX_PIN 16
