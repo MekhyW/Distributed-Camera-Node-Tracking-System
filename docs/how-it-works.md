@@ -12,6 +12,18 @@ For every node, the tracker runs 3 things in parallel:
 
 KalmanTracker is a 4-state constant-velocity filter on [x, y, vx, vy]
 
+Learn a bit about the filter here:
+
+<iframe 
+  width="560" 
+  height="315" 
+  src="https://www.youtube-nocookie.com/embed/IFeCIbljreY?si=l_51t2-1fK2p1oUv" 
+  title="YouTube video player" 
+  frameborder="0" 
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+  allowfullscreen>
+</iframe>
+
 - Predict runs on every frame, so the estimate keeps moving smoothly between YOLO runs
 - Correct runs when YOLO finds the target (the highest-confidence box is used)
 - If nothing is detected for PREDICTION_TIMEOUT (0.5 s), tracking stops and the estimate returns to the image centre, which tells the motors to stop
@@ -22,10 +34,13 @@ The motors aim at a point LOOKAHEAD_TIME (0.4 s) ahead of the current estimate, 
 
 The aim point is converted to a normalised error in [-1, 1]:
 
+$$
+norm_x = \frac{x - 320}{320}
+$$
 
-norm_x = (x - 320) / 320      # +1 = right edge
-norm_y = (240 - y) / 240      # +1 = top edge
-
+$$
+norm_y = \frac{240 - y}{240}
+$$
 
 and sent as plain text, e.g. 0.215,-0.083.
 
@@ -33,9 +48,9 @@ and sent as plain text, e.g. 0.215,-0.083.
 
 Every 10 ms the firmware runs a PD controller per axis:
 
-
-output = Kp * error + Kd * d(error)/dt
-
+$$
+output = K_p \cdot error + K_d \cdot \frac{d(error)}{dt}
+$$
 
 - Errors inside the dead-band (0.1) count as zero, so the camera doesn't jitter around the centre.
 - Output is clamped to the RPM limits and the stepper takes a few steps per tick.
